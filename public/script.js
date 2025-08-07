@@ -1,8 +1,8 @@
-const BASE_URL = 'https://shopping-list-app-1-08m3.onrender.com';
+const BASE_URL = "https://shopping-list-app-1-08m3.onrender.com";
+
 let shoppingList = [];
 const listContainer = document.getElementById("items-list");
 
-// ✅ Load items from backend
 async function loadItems() {
   try {
     const res = await fetch(`${BASE_URL}/api/items`);
@@ -13,7 +13,6 @@ async function loadItems() {
   }
 }
 
-// ✅ Render items in the UI
 function renderItems() {
   listContainer.innerHTML = "";
   if (shoppingList.length === 0) {
@@ -39,13 +38,12 @@ function renderItems() {
   });
 }
 
-// ✅ Add new item
 async function addItem() {
   const name = document.getElementById("item-name").value.trim();
   const quantity = document.getElementById("manual-quantity").value.trim() || document.getElementById("quantity-select").value;
 
   if (!name) return alert("Enter an item name!");
-  
+
   const res = await fetch(`${BASE_URL}/api/items`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -60,7 +58,6 @@ async function addItem() {
   document.getElementById("manual-quantity").value = "";
 }
 
-// ✅ Toggle complete
 async function toggleComplete(id, completed) {
   await fetch(`${BASE_URL}/api/items/${id}`, {
     method: "PUT",
@@ -70,7 +67,6 @@ async function toggleComplete(id, completed) {
   loadItems();
 }
 
-// ✅ Edit item
 async function editItem(id) {
   const item = shoppingList.find(i => i._id === id);
   const newName = prompt("Edit name:", item.name);
@@ -84,13 +80,11 @@ async function editItem(id) {
   loadItems();
 }
 
-// ✅ Delete item
 async function deleteItem(id) {
   await fetch(`${BASE_URL}/api/items/${id}`, { method: "DELETE" });
   loadItems();
 }
 
-// ✅ Save as a new list
 async function newList() {
   if (shoppingList.length === 0) return alert("No items to save!");
   const name = prompt("Enter name for this list:");
@@ -104,7 +98,6 @@ async function newList() {
   renderItems();
 }
 
-// ✅ Show previous lists
 async function showPreviousLists() {
   const res = await fetch(`${BASE_URL}/api/lists`);
   const lists = await res.json();
@@ -125,12 +118,11 @@ async function showPreviousLists() {
   });
 }
 
-// ✅ Download CSV
 function downloadCSV() {
   if (shoppingList.length === 0) return alert("No items to download!");
   const csv = "Item,Quantity,Completed\n" +
     shoppingList.map(item => `${item.name},${item.quantity},${item.completed ? "Yes" : "No"}`).join("\n");
-  
+
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -141,7 +133,6 @@ function downloadCSV() {
   document.body.removeChild(a);
 }
 
-// ✅ WhatsApp Share
 function sendToWhatsApp() {
   if (shoppingList.length === 0) return alert("No items to share!");
   const message = shoppingList
@@ -151,5 +142,4 @@ function sendToWhatsApp() {
   window.open(url, "_blank");
 }
 
-// ✅ Initial Load
 window.onload = loadItems;
