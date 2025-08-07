@@ -1,7 +1,6 @@
+const BASE_URL = 'https://shopping-list-app-1-08m3.onrender.com';
 let shoppingList = [];
 const listContainer = document.getElementById("items-list");
-
-const BASE_URL = 'https://shopping-list-app-1-08m3.onrender.com';
 
 // ✅ Load items from backend
 async function loadItems() {
