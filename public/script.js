@@ -1,10 +1,12 @@
 let shoppingList = [];
 const listContainer = document.getElementById("items-list");
 
+const BASE_URL = 'https://shopping-list-app-1-08m3.onrender.com';
+
 // ✅ Load items from backend
 async function loadItems() {
   try {
-    const res = await fetch("/api/items");
+    const res = await fetch(`${BASE_URL}/api/items`);
     shoppingList = await res.json();
     renderItems();
   } catch (err) {
@@ -45,7 +47,7 @@ async function addItem() {
 
   if (!name) return alert("Enter an item name!");
   
-  const res = await fetch("/api/items", {
+  const res = await fetch(`${BASE_URL}/api/items`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, quantity, completed: false })
@@ -61,7 +63,7 @@ async function addItem() {
 
 // ✅ Toggle complete
 async function toggleComplete(id, completed) {
-  await fetch(`/api/items/${id}`, {
+  await fetch(`${BASE_URL}/api/items/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ completed })
@@ -75,7 +77,7 @@ async function editItem(id) {
   const newName = prompt("Edit name:", item.name);
   const newQty = prompt("Edit quantity:", item.quantity);
   if (!newName || !newQty) return;
-  await fetch(`/api/items/${id}`, {
+  await fetch(`${BASE_URL}/api/items/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name: newName, quantity: newQty })
@@ -85,7 +87,7 @@ async function editItem(id) {
 
 // ✅ Delete item
 async function deleteItem(id) {
-  await fetch(`/api/items/${id}`, { method: "DELETE" });
+  await fetch(`${BASE_URL}/api/items/${id}`, { method: "DELETE" });
   loadItems();
 }
 
@@ -94,7 +96,7 @@ async function newList() {
   if (shoppingList.length === 0) return alert("No items to save!");
   const name = prompt("Enter name for this list:");
   if (!name) return;
-  await fetch("/api/lists", {
+  await fetch(`${BASE_URL}/api/lists`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, items: shoppingList })
@@ -105,7 +107,7 @@ async function newList() {
 
 // ✅ Show previous lists
 async function showPreviousLists() {
-  const res = await fetch("/api/lists");
+  const res = await fetch(`${BASE_URL}/api/lists`);
   const lists = await res.json();
   const container = document.getElementById("previous-lists");
   const ul = document.getElementById("previous-list-names");
@@ -117,14 +119,14 @@ async function showPreviousLists() {
     li.textContent = list.name;
     li.className = "cursor-pointer hover:text-indigo-500";
     li.onclick = async () => {
-      await fetch(`/api/lists/load/${list._id}`, { method: "POST" });
+      await fetch(`${BASE_URL}/api/lists/load/${list._id}`, { method: "POST" });
       loadItems();
     };
     ul.appendChild(li);
   });
 }
 
-// ✅ Download CSV (✅ FIXED)
+// ✅ Download CSV
 function downloadCSV() {
   if (shoppingList.length === 0) return alert("No items to download!");
   const csv = "Item,Quantity,Completed\n" +
@@ -140,7 +142,7 @@ function downloadCSV() {
   document.body.removeChild(a);
 }
 
-// ✅ WhatsApp Share (✅ FIXED)
+// ✅ WhatsApp Share
 function sendToWhatsApp() {
   if (shoppingList.length === 0) return alert("No items to share!");
   const message = shoppingList
